@@ -78,6 +78,52 @@ Run tests:
 pytest
 ```
 
+## Conversational Mode
+
+X2G-Agent includes a terminal chat interface for running the Building-to-Grid case from natural-language requests.
+
+Architecture:
+
+```text
+User message -> LLM/rule parser -> validated actions -> Building-to-Grid workflow -> report summary
+```
+
+Rule-based chat mode is the default and does not call the OpenAI API:
+
+```bash
+python scripts/chat_building_to_grid.py --backend rule
+```
+
+OpenAI-backed LLM chat mode uses OpenAI only to parse user intent into validated actions. It calls the OpenAI API and may incur API cost:
+
+```bash
+python scripts/chat_building_to_grid.py --backend openai
+```
+
+Required `.env` settings for OpenAI-backed mode:
+
+```text
+OPENAI_API_KEY=your_openai_api_key_here
+X2G_CHAT_BACKEND=rule
+X2G_CHAT_MODEL=gpt-4.1-mini
+```
+
+Example prompts:
+
+```text
+Connect the building to bus_4 and run mock Building-to-Grid.
+Set the load scale to 2.0 and summarize voltage violations.
+Run real Building-to-Grid and generate the report.
+```
+
+Safety design:
+
+- The LLM only parses user intent into validated actions.
+- The deterministic workflow executes EnergyPlus and OpenDSS.
+- The LLM does not directly modify simulation files or run shell commands.
+
+The chat agent writes a temporary config under `outputs/chat_sessions/` and calls the same deterministic `run_building_to_grid` workflow used by the script interface. To inspect OpenAI parser behavior, add `--debug`.
+
 ## Real EnergyPlus + OpenDSSDirect Mode
 
 Set the EnergyPlus paths in a local `.env` file. A template is provided in `.env.example`.
