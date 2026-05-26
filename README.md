@@ -175,7 +175,7 @@ Citation information will be added in a future release.
 ```bibtex
 @software{x2g_agent,
   title = {X2G-Agent},
-  author = {X2G-Agent Contributors},
+  author = {Xueyuan Cui},
   year = {2026},
   note = {Agentic workflows for end-use-to-grid simulation}
 }
